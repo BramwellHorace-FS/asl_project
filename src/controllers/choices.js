@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const { Choice } = require('../models');
+const { isAuthenticated } = require('../middlewares/auth')
 
 // Body parser middleware - allows us to parse the body of the request
 router.use(bodyParser.urlencoded({ extended: false }));
 
 // GET /Choices - returns all choices - (INDEX)
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
   const choices = await Choice.findAll(); // find all choices in the database
 
   if (req.headers.accept.indexOf('application/json') > -1) {
@@ -18,12 +19,12 @@ router.get('/', async (req, res) => {
 });
 
 // Renders the new choice form - (NEW)
-router.get('/new', (req, res) => {
+router.get('/new', isAuthenticated, (req, res) => {
   res.render('choice/create');
 });
 
 // POST /Choices - creates a new choice - (CREATE)
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
   const { label, questionId } = req.body;
   const choice = await Choice.create({ label, questionId });
 
@@ -35,7 +36,7 @@ router.post('/', async (req, res) => {
 });
 
 // GET /Choices/:id - returns a single choice - (SHOW)
-router.get('/:id', async (req, res) => {
+router.get('/:id', isAuthenticated, async (req, res) => {
   const choice = await Choice.findByPk(req.params.id);
 
   if (req.headers.accept.indexOf('application/json') > -1) {
@@ -46,13 +47,13 @@ router.get('/:id', async (req, res) => {
 });
 
 // GET /Choices/:id/edit - renders the edit choice form - (EDIT)
-router.get('/:id/edit', async (req, res) => {
+router.get('/:id/edit', isAuthenticated, async (req, res) => {
   const choice = await Choice.findByPk(req.params.id);
   res.render('choice/edit', { choice });
 });
 
 // POST /Choices/:id - updates a choice - (UPDATE)
-router.post('/:id', async (req, res) => {
+router.post('/:id', isAuthenticated, async (req, res) => {
   const { label, questionId } = req.body;
   const { id } = req.params;
   const choice = await Choice.findByPk(id);
@@ -66,7 +67,7 @@ router.post('/:id', async (req, res) => {
 });
 
 // DELETE /Choices/:id - deletes a choice - (DESTROY)
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isAuthenticated, async (req, res) => {
   const { id } = req.params;
   const choice = await Choice.findByPk(id);
   const deletedChoice = await choice.destroy();
