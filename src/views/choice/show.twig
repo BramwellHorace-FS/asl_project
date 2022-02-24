@@ -1,0 +1,12 @@
+{% extends "layouts/_default.twig" %}
+
+    {% block content %}
+        <div>
+            <h1>{{ choice.label }}</h1>
+            <p><strong>ID: </strong> {{choice.id}}</p>
+            <p><strong>Question ID: </strong> {{choice.questionId}}</p>
+            <p><strong>Created At: </strong> {{choice.createdAt}}</p>
+            <p><strong>Updated Last: </strong> {{choice.updatedAt}}</p>
+        </div>
+    {% endblock %}
+       

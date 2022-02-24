@@ -9,35 +9,74 @@ router.use(bodyParser.urlencoded({ extended: false }));
 // GET /Questions - returns all questions - (INDEX)
 router.get('/', async (req, res) => {
   const questions = await Question.findAll(); // find all questions in the database
-  res.json(questions); // send the questions to the client in JSON format
+
+  if (req.headers.accept.indexOf('application/json') > -1) {
+    // if the client accepts json
+    res.json(questions); // send the questions as json
+  } else {
+    res.render('question/index', { questions }); // render the index view and pass in the questions
+  }
 });
 
-// GET /Questions/:id - returns a single question - (SHOW)
+// Renders the new question form - (NEW)
+router.get('/new', async (req, res) => {
+  res.render('question/create');
+});
+
+// POST /questions - creates a new question - (CREATE)
+router.post('/', async (req, res) => {
+  const { question, quizId } = req.body; // extract the question and quizId from the request body
+  const questionObj = await Question.create({ question, quizId }); // create a new question in the database
+
+  if (req.headers.accept.indexOf('application/json') > -1) {
+    res.json(questionObj);
+  } else {
+    res.redirect(`/questions/${questionObj.id}`); // redirect to the show page for the new question
+  }
+});
+
+// GET /questions/:id - returns a single question - (SHOW)
 router.get('/:id', async (req, res) => {
   const question = await Question.findByPk(req.params.id); // find the question in the database with the id in the url
-  res.json(question); // send the question to the client in JSON format
+
+  if (req.headers.accept.indexOf('application/json') > -1) {
+    res.json(question);
+  } else {
+    res.render('question/show', { question }); // render the show view and pass in the question
+  }
 });
 
-// POST /Questions - creates a new question - (CREATE)
-router.post('/', async (req, res) => {
-  const { question, quizId } = req.body; // extract the question, answer and quizId from the request body
-  const question = await Question.create({ question, quizId }); // create a new question in the database
-  res.json(question); // send the question just created to the client in JSON format
+// GET /questions/:id/edit - renders the edit question form - (EDIT)
+router.get('/:id/edit', async (req, res) => {
+  const question = await Question.findByPk(req.params.id); // find the question in the database with the id in the url
+  res.render('question/edit', { question }); // render the edit view and pass in the question
 });
 
-// POST /Questions/:id - updates a question - (UPDATE)
+// POST /questions/:id - updates a question - (UPDATE)
 router.post('/:id', async (req, res) => {
-  const { question, quizId } = req.body; // extract the question, answer and quizId from the request body
+  const { question, quizId } = req.body; // extract the question and quizId from the request body
   const { id } = req.params; // extract the id from the request params
-  const question = await Question.update({ question, quizId }, { where: { id } }); // update the question in the database
-  res.json(question); // send the question to the client in JSON format
+  const questionObj = await Question.findByPk(id); // find the question in the database with the id in the url
+  const updatedQuestion = await questionObj.update({ question, quizId }); // update the question in the database
+
+  if (req.headers.accept.indexOf('application/json') > -1) {
+    res.json(updatedQuestion);
+  } else {
+    res.redirect(`/questions/${updatedQuestion.id}`); // redirect to the show page for the updated question
+  }
 });
 
-// DELETE /Questions/:id - deletes a question - (DELETE)
-router.delete('/:id', async (req, res) => {
+// DELETE /questions/:id - deletes a question - (DESTROY)
+router.get('/:id/delete', async (req, res) => {
   const { id } = req.params; // extract the id from the request params
-  const question = await Question.destroy({ where: { id } }); // delete the question in the database
-  res.redirect('/questions'); // redirect the client to the questions index page
+  const question = await Question.findByPk(id); // find the question in the database with the id in the url
+  const deletedQuestion = await question.destroy(); // delete the question from the database
+
+  if (req.headers.accept.indexOf('application/json') > -1) {
+    res.json({ deletedQuestion });
+  } else {
+    res.redirect('/questions'); // redirect to the index page
+  }
 });
 
 module.exports = router; // Exports the router object

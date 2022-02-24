@@ -1,0 +1,12 @@
+{% extends "layouts/_default.twig" %}
+
+    {% block content %}
+        <div>
+            <h1>{{ question.question }}</h1>
+            <p><strong>ID: </strong> {{question.id}}</p>
+            <p><strong>Quiz ID: </strong> {{question.quizId}}</p>
+            <p><strong>Created At: </strong> {{question.createdAt}}</p>
+            <p><strong>Updated Last: </strong> {{question.updatedAt}}</p>
+        </div>
+    {% endblock %}
+       

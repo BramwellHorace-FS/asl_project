@@ -1,0 +1,29 @@
+{% if choice %}
+    <form action="/choice/{{choice.id}}" method="post">
+{% else %}
+    <form action="/choices" method="post">
+{% endif %}
+        {% if choice %}
+            <div class="form-group">
+                <label for="label">Label</label>
+                <input type="text" name="label" id="label" placeholder="label" value="{{choice.label}}">
+            </div>
+
+            <div class="form-group">
+                <label for="weight">Quiz ID</label>
+                <input type="number" name="QuestionId" id="questionId" placeholder="Question ID" value="{{choice.questionId}}">
+            </div>
+        {% else %}
+            <div class="form-group">
+                <label for="name">Label</label>
+                <input type="text" name="label" id="label" placeholder="label">
+            </div>
+
+            <div class="form-group">
+                <label for="weight">Question ID</label>
+                <input type="number" name="questionId" id="questionId" placeholder="Question ID">
+            </div>
+        {% endif %}
+
+        <input type="submit" value="Submit">
+    </form>
