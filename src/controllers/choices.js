@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
-const { Choice } = require('../models');
-const { isAuthenticated } = require('../middlewares/auth')
+const { Choice, Question } = require('../models');
+const { isAuthenticated } = require('../middlewares/auth');
 
 // Body parser middleware - allows us to parse the body of the request
 router.use(bodyParser.urlencoded({ extended: false }));
 
 // GET /Choices - returns all choices - (INDEX)
 router.get('/', isAuthenticated, async (req, res) => {
-  const choices = await Choice.findAll(); // find all choices in the database
+  const choices = await Choice.findAll({
+    include: Question,
+  }); // find all choices in the database
 
   if (req.headers.accept.indexOf('application/json') > -1) {
     res.json(choices);
@@ -37,7 +39,9 @@ router.post('/', isAuthenticated, async (req, res) => {
 
 // GET /Choices/:id - returns a single choice - (SHOW)
 router.get('/:id', isAuthenticated, async (req, res) => {
-  const choice = await Choice.findByPk(req.params.id);
+  const choice = await Choice.findByPk(req.params.id, {
+    include: Question,
+  });
 
   if (req.headers.accept.indexOf('application/json') > -1) {
     res.json(choice);

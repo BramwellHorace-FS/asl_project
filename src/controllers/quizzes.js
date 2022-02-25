@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
-const { Quiz } = require('../models');
+const { Quiz, Question, Choice } = require('../models');
 const { isAuthenticated } = require('../middlewares/auth');
 
 // Body parser middleware - allows us to parse the body of the request
@@ -9,7 +9,10 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // GET /quizzes - returns all quizzes - (INDEX)
 router.get('/', isAuthenticated, async (req, res) => {
-  const quizzes = await Quiz.findAll(); // find all quizzes in the database
+  const quizzes = await Quiz.findAll({
+    // find all quizzes
+    include: [{ model: Question, include: [Choice] }], // include the questions and choices
+  });
 
   if (req.headers.accept.indexOf('application/json') > -1) {
     // if the client accepts json
@@ -26,7 +29,9 @@ router.get('/new', isAuthenticated, (req, res) => {
 
 // GET /quizzes/:id - returns a single quiz - (SHOW)
 router.get('/:id', isAuthenticated, async (req, res) => {
-  const quiz = await Quiz.findByPk(req.params.id); // find the quiz in the database with the id in the url
+  const quiz = await Quiz.findByPk(req.params.id, {
+    include: [{ model: Question, include: [Choice] }],
+  }); // find the quiz in the database with the id in the url
 
   if (req.headers.accept.indexOf('application/json') > -1) {
     res.json(quiz);

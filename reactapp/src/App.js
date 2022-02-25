@@ -8,20 +8,20 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import queryString from 'querystring';
 
 function App() {
-  const [jwt, setJwt] = useState('');
+  const [jwt, setJwt] = useState(''); // set the jwt to an empty string
 
   useEffect(() => {
     const getJWT = async () => {
-      const token = queryString.parse(window.location.search.slice(1)).token;
-      localStorage.token = token;
+      const token = queryString.parse(window.location.search.slice(1)).token; // extract the token from the url
+      localStorage.token = token; // set the token in the local storage
 
-      const response = await fetch('http://localhost:3000/auth/token', {
+      const response = await fetch('http://localhost:3000/auth/token', { // validate the token in the database and return the jwt if valid
         headers: {
-          token: localStorage.token,
+          token: localStorage.token, // set the token in the headers
         },
       });
-      const data = await response.json();
-      setJwt(data.token);
+      const data = await response.json(); // parse the response into json
+      setJwt(data.token); // set the jwt to the data
     };
     getJWT();
   }, []);
