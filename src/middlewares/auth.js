@@ -3,7 +3,13 @@ const isAuthenticated = (req, res, next) => {
     next();
     return;
   }
-  res.redirect('/auth/login');
+
+  if (typeof req.headers.token !== 'undefined') {
+    next();
+    return;
+  }
+
+  res.send({ error: 'Not authenticated' });
 };
 
 module.exports = { isAuthenticated };
