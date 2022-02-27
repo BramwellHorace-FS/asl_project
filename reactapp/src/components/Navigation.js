@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 const Navigation = ({ loggedIn }) => {
 
   const logout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/';
+    localStorage.removeItem('token'); // remove the token from the local storage
+    window.location.href = '/'; // redirect to the home page
   }
 
   return (

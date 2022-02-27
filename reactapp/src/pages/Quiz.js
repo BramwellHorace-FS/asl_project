@@ -50,7 +50,7 @@ const Quiz = () => {
                   .reverse()
                   .map((choice) => (
                     <li className="text-2xl flex items-center justify-start gap-2 mb-2 font-medium strokeText" key={choice.id}>
-                      <input className="bg-transparent h-5 w-5" type="radio" name={question.id} value={choice.id} required />
+                      <input className="bg-transparent h-5 w-5 checked:bg-black checked:focus:bg-black active:bg-black focus:outline focus:outline-black" type="radio" name={question.id} value={choice.id} required />
                       {choice.label}
                     </li>
                   ))}
